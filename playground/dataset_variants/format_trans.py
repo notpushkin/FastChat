@@ -2,6 +2,13 @@ import argparse
 import json
 
 
+def translate(role):
+    if role == "user":
+        return "human"
+    else:
+        return "gpt"
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-file", type=str, required=True)
@@ -15,7 +22,7 @@ if __name__ == "__main__":
     for conv in data:
         conversation = []
         for chat in conv["conversation"]:
-            conversation.append({"from": chat["role"], "value": chat["content"]})
+            conversation.append({"from": translate(chat["role"]), "value": chat["content"]})
         train_data.append({"id": conv["conversation_id"], "conversations": conversation})
 
     with open(args.output_file, "w") as f:
