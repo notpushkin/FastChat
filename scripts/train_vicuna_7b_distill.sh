@@ -1,6 +1,6 @@
 torchrun --nproc_per_node=4 --master_port=20001 fastchat/train/train_mem.py \
     --model_name_or_path meta-llama/Llama-2-7b-hf \
-    --data_path playground/dataset_variants/distill.json \
+    --data_path playground/dataset_variants/distill_train.json \
     --bf16 True \
     --output_dir distill_vicuna_7b \
     --num_train_epochs 3 \
