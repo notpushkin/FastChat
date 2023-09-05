@@ -18,6 +18,11 @@ if __name__ == "__main__":
     with open(args.input_file, "r") as f:
         data = json.load(f)
 
+    models = set()
+    for conv in data:
+        models.add(conv["model"])
+    print(models)
+
     train_data = []
     for conv in data:
         conversation = []
