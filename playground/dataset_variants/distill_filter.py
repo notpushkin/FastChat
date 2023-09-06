@@ -2,8 +2,8 @@ import argparse
 import json
 
 
-def gen_distill_data(filepath, output_file):
-    with open(filepath, "r") as f:
+def gen_distill_data(input_file, output_file):
+    with open(input_file, "r") as f:
         all_data = json.load(f)
     print(all_data[0].keys())
 
@@ -28,5 +28,5 @@ if __name__ == "__main__":
     parser.add_argument("--output-file", type=str, default="distill.json")
     args = parser.parse_args()
 
-    distill_data = gen_distill_data(args.filepath, args.output_file)
-    # upvote_data = gen_upvote_data(args.filepath, args.output_file)
+    distill_data = gen_distill_data(args.input_file, args.output_file)
+    # upvote_data = gen_upvote_data(args.input_file, args.output_file)
