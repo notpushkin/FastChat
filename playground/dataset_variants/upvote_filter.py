@@ -10,7 +10,7 @@ def gen_upvote_data(input_file, output_file):
 
     upvote_data = []
     for conv in all_data:
-        if conv["model"] not in ["claude-1", "claude-instant-1", "gpt-4", "claude-2", "palm-2", "gpt-3.5-turbo"]:
+        if conv["model"] not in ["claude-1", "claude-instant-1", "claude-2", "palm-2", "gpt-4", "gpt-3.5-turbo"]:
             upvote_data.append(conv)
     print("upvote data size", len(upvote_data))
 

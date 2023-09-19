@@ -9,7 +9,7 @@ def gen_distill_data(input_file, output_file):
 
     distill_data = []
     for conv in all_data:
-        if conv["model"] in ["claude-1", "claude-instant-1", "gpt-4", "claude-2"]:
+        if conv["model"] in ["claude-1", "claude-instant-1", "claude-2", "gpt-4", "gpt-3.5-turbo"]:
             distill_data.append(conv)
     print("distill data size", len(distill_data))
 
