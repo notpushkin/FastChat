@@ -83,13 +83,15 @@ def trainer_save_model_safe(trainer: transformers.Trainer):
 def preprocess(
     sources,
     tokenizer: transformers.PreTrainedTokenizer,
+    template_name: str = "vicuna",
 ) -> Dict:
-    conv = get_conversation_template("vicuna")
+    conv = get_conversation_template(template_name)
     roles = {"human": conv.roles[0], "gpt": conv.roles[1]}
 
     # Apply prompt templates
     conversations = []
     for i, source in enumerate(sources):
+        assert i == 0
         if roles[source[0]["from"]] != conv.roles[0]:
             # Skip the first one if it is not from human
             source = source[1:]
@@ -203,7 +205,10 @@ class LazySupervisedDataset(Dataset):
         if i in self.cached_data_dict:
             return self.cached_data_dict[i]
 
-        ret = preprocess([self.raw_data[i]["conversations"]], self.tokenizer)
+        temp_name = "vicuna"
+        if self.raw_data[i]["id"].startswith("moderator"):
+            temp_name = "moderator"
+        ret = preprocess([self.raw_data[i]["conversations"]], self.tokenizer, template_name=temp_name)
         ret = dict(
             input_ids=ret["input_ids"][0],
             labels=ret["labels"][0],

@@ -558,6 +558,16 @@ class VicunaAdapter(BaseModelAdapter):
             )
 
 
+class VicunaModeratorAdapter(VicunaAdapter):
+    use_fast_tokenizer = False
+
+    def match(self, model_path: str):
+        return "moderator" in model_path.lower()
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("moderator")
+
+
 class AiroborosAdapter(BaseModelAdapter):
     """The model adapter for jondurbin/airoboros-*"""
 
@@ -1021,7 +1031,11 @@ class WizardLMAdapter(BaseModelAdapter):
 
     def get_default_conv_template(self, model_path: str) -> Conversation:
         model_path = model_path.lower()
-        if "13b" in model_path or "30b" in model_path or "70b" in model_path:
+        if "nocot" in model_path:
+            return get_conv_template("wizardmath")
+        elif "math" in model_path:
+            return get_conv_template("wizardmath_cot")
+        elif "13b" in model_path or "30b" in model_path or "70b" in model_path:
             return get_conv_template("vicuna_v1.1")
         else:
             # TODO: use the recommended template for 7B
@@ -1597,6 +1611,7 @@ class CodeLlamaAdapter(BaseModelAdapter):
 # The one registered earlier has a higher matching priority.
 register_model_adapter(PeftModelAdapter)
 register_model_adapter(VicunaAdapter)
+register_model_adapter(VicunaModeratorAdapter)
 register_model_adapter(AiroborosAdapter)
 register_model_adapter(LongChatAdapter)
 register_model_adapter(CodeT5pAdapter)

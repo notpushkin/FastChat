@@ -15,6 +15,8 @@ class SeparatorStyle(IntEnum):
 
     ADD_COLON_SINGLE = auto()
     ADD_COLON_TWO = auto()
+    ADD_COLON_TWO_COT = auto()
+    ADD_COLON_TWO_NL = auto()
     ADD_COLON_SPACE_SINGLE = auto()
     NO_COLON_SINGLE = auto()
     NO_COLON_TWO = auto()
@@ -73,6 +75,27 @@ class Conversation:
                     ret += role + ": " + message + seps[i % 2]
                 else:
                     ret += role + ":"
+            return ret
+        elif self.sep_style == SeparatorStyle.ADD_COLON_TWO_NL:
+            seps = [self.sep, self.sep2]
+            ret = system_prompt + seps[0]
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += role + ":\n" + message + seps[i % 2]
+                else:
+                    ret += role + ":"
+            return ret
+        elif self.sep_style == SeparatorStyle.ADD_COLON_TWO_COT:
+            seps = [self.sep, self.sep2]
+            ret = system_prompt + seps[0]
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    if i % 2 == 0:
+                        ret += role + ":\n" + message + seps[0]
+                    else:
+                        ret += role + ": " + message + seps[1]
+                else:
+                    ret += role + ": Let's think step by step."
             return ret
         elif self.sep_style == SeparatorStyle.ADD_COLON_SPACE_SINGLE:
             ret = system_prompt + self.sep
@@ -344,6 +367,27 @@ register_conv_template(
     )
 )
 
+# Vicuna v1.1 template
+register_conv_template(
+    Conversation(
+        name="moderator",
+        system_message="""Determine whether the user input texts fall into one of the following categories:
+
+1. hate: Content that expresses, incites, or promotes hate based on race, gender, ethnicity, religion, nationality, sexual orientation, disability status, or caste. Hateful content aimed at non-protected groups (e.g., chess players) is harassment.
+2. self-harm: Content that promotes, encourages, or depicts acts of self-harm, such as suicide, cutting, and eating disorders.
+3. sexual: Content meant to arouse sexual excitement, such as the description of sexual activity, or that promotes sexual services (excluding sex education and wellness).
+4. violence: Content that depicts death, violence, or physical injury.
+5. harassment: Content that expresses, incites, or promotes harassing language towards any target.
+6. None of the above
+
+You should first output a brief explanation and then state your choice, which should be wrapped by \"[[\", and \"]]\". For example, \"[[1. hate]]\"""",
+        roles=("USER", "ASSISTANT"),
+        sep_style=SeparatorStyle.ADD_COLON_TWO,
+        sep=" ",
+        sep2="</s>",
+    )
+)
+
 register_conv_template(
     Conversation(
         name="airoboros_v1",
@@ -387,6 +431,30 @@ register_conv_template(
         system_message="Below is an instruction that describes a task. Write a response that appropriately completes the request.",
         roles=("### Instruction", "### Response"),
         sep_style=SeparatorStyle.ADD_COLON_TWO,
+        sep="\n\n",
+        sep2="</s>",
+    )
+)
+
+# Alpaca default template
+register_conv_template(
+    Conversation(
+        name="wizardmath_cot",
+        system_message="Below is an instruction that describes a task. Write a response that appropriately completes the request.",
+        roles=("### Instruction", "### Response"),
+        sep_style=SeparatorStyle.ADD_COLON_TWO_COT,
+        sep="\n\n",
+        sep2="</s>",
+    )
+)
+
+# Alpaca default template
+register_conv_template(
+    Conversation(
+        name="wizardmath",
+        system_message="Below is an instruction that describes a task. Write a response that appropriately completes the request.",
+        roles=("### Instruction", "### Response"),
+        sep_style=SeparatorStyle.ADD_COLON_TWO_NL,
         sep="\n\n",
         sep2="</s>",
     )
